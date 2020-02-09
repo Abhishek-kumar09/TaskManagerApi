@@ -1,0 +1,21 @@
+{
+  "name": "TaskApp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start" : "node index.js",
+    "dev" : "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  
+  "dependencies": {
+    "bcrypt": "^3.0.8",
+    "express": "^4.17.1",
+    "mongodb": "^3.5.1",
+    "mongoose": "^5.8.9",
+    "validator": "^12.1.0"
+  }
+}

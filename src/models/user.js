@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
+const bcrypt = require('bcrypt')
 
 const UserSchema = mongoose.Schema({
     name: {
@@ -22,16 +23,16 @@ const UserSchema = mongoose.Schema({
         required: true,
         trim: true,
         validate(value) {
-            if (value.length < 7 && value.toLoweCase().include('password')) {
+            if (value.length < 7 && value.toLowerCase().includes('password')) {
                 throw new Error('Choose better Password')
             }
         }
     }
 })
 
-UserSchema.pre('save', function async() {
-    if (mongoose.isModified(this.password)) {
-        this.password = bcrypt.hash(this.password, 8)
+UserSchema.pre('save',async function() {
+    if (this.isModified('password')) {       
+        this.password = await bcrypt.hash(this.password, 8)       
     }
 })
 
@@ -39,27 +40,3 @@ User = mongoose.model('User', UserSchema)
 
 
 module.exports = User;
-
-
-// Sample Codes 
-// email : {
-//     type : String,
-//     required :true,
-//     trim : true,
-//     validate(value)  {
-//         if(!validator.isEmail(value)) {
-//             throw new Error('Email not Valid!')                
-//         }
-//     }
-// },
-// password : {
-//     type : String,
-//     required : true,
-//     trim :true,
-//     minlength : 7,
-//     validate(value) {
-//         if(value.toLowerCase().includes('password')) {
-//             throw new Error('Your password must not include password as String')             
-//         }
-//     }
-// },

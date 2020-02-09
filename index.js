@@ -9,11 +9,11 @@ const port = process.env.port || 3000
 const app = express()
 app.use(express.json())
 
-app.post('/task',(req,res)=>{
-    Task = new Tasks(req.body) 
-    Task.save().then(()=>{
+app.post('/task', (req, res) => {
+    Task = new Tasks(req.body)
+    Task.save().then(() => {
         res.send(Task)
-    }).catch((e)=>{
+    }).catch((e) => {
         res.status(404).send(e)
     })
 })
@@ -26,7 +26,7 @@ app.post('/user', (req, res) => {
     })
         .catch((e) => {
             res.status(400).send(e)
-            console.log("Error Ocurred once again")
+            console.log("Error Ocurred once again" + e)
         })
 
 })
@@ -43,9 +43,9 @@ app.get('/user/:id', (req, res) => {
 app.get('/task/:id', (req, res) => {
     const _id = req.params.id
     Tasks.findById(_id).then((task) => {
-        if(!task) return res.send("No User Found")
+        if (!task) return res.send("No User Found")
         res.send(task)
-    }).catch((e)=> {
+    }).catch((e) => {
         res.status(500).send(e)
     })
 })
@@ -61,13 +61,35 @@ app.post('/user', (req, res) => {
     })
 })
 
-app.patch('/user/:id',(req,res) => {
-    const _id = req.params.id
-    User.findByIdAndUpdate(_id,req.body,{new : true, runValidators : true}).then((user)=> {
+app.patch('/user/:id',async (req, res) => {
+    const updates = Object.keys(req.body)
+    const allowedUpdates = ["name", "email", "password"]
+    const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
+
+    if (!isValidOperation) {
+        return res.status(400).send("Updates not Valid!")
+    }
+
+    try {
+        const user = await User.findById(req.params.id)
+        if(!user) {
+            return res.status(404).send("User NOt Found")
+        }
+        updates.forEach((update) => {
+            user[update] = req.body[update]
+        })        
+        await user.save()   
         res.send(user)
-    }).catch((E)=> {
-        res.status(500).send(E)
-    })
+    } catch (e) {
+        res.status(500).send(e)
+    }
+
+    // user.save()
+    // User.findByIdAndUpdate(_id,req.body,{new : true, runValidators : true}).then((user)=> {
+    //     res.send(user)
+    // }).catch((E)=> {
+    //     res.status(500).send(E)
+    // })
 })
 
 app.listen(port, () => {

@@ -31,6 +31,16 @@ app.post('/user', (req, res) => {
 
 })
 
+app.post('/user/login',async (req, res) => {
+    try {
+        const user = await User.findByCredential(req.body.email, req.body.password)
+        res.send(user)
+    }
+    catch (e) {
+        res.status(400).send(e)
+    }
+})
+
 app.get('/user/:id', (req, res) => {
     _id = req.params.id
     User.findById(_id).then((user) => {
@@ -61,7 +71,7 @@ app.post('/user', (req, res) => {
     })
 })
 
-app.patch('/user/:id',async (req, res) => {
+app.patch('/user/:id', async (req, res) => {
     const updates = Object.keys(req.body)
     const allowedUpdates = ["name", "email", "password"]
     const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
@@ -72,13 +82,13 @@ app.patch('/user/:id',async (req, res) => {
 
     try {
         const user = await User.findById(req.params.id)
-        if(!user) {
+        if (!user) {
             return res.status(404).send("User NOt Found")
         }
         updates.forEach((update) => {
             user[update] = req.body[update]
-        })        
-        await user.save()   
+        })
+        await user.save()
         res.send(user)
     } catch (e) {
         res.status(500).send(e)

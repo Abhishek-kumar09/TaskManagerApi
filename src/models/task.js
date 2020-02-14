@@ -1,7 +1,5 @@
 
 const mongoose = require('mongoose')
-const validator = require('validator')
-
 const taskSchema = mongoose.Schema({
     name : {
         type : String,

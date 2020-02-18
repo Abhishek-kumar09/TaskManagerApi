@@ -1,4 +1,3 @@
-
 require('../../src/models/task')
 require('../../src/models/user')
 const express = require('express')
@@ -15,8 +14,6 @@ router.post('/task', (req, res) => {
         res.status(404).send(e)
     })
 })
-
-
 
 router.get('/task/:id', (req, res) => {
     const _id = req.params.id
